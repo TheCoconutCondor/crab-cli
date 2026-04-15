@@ -53,7 +53,7 @@ fn validate_config(config: &Config) -> Result<(), ConfigError> {
     ];
 
     for (enabled, key, name) in checks {
-        if enabled && key.is_none() {
+        if enabled && key.as_deref().map_or(true, |k| k.is_empty()) {
             return Err(ConfigError::MissingKey(name.to_string()));
         }
     }
