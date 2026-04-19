@@ -1,7 +1,5 @@
-use crate::enrich::utils::check_path;
-use crate::errors::EnrichError;
+use crate::enrich::utils::*;
 use std::path::PathBuf;
-use url::Host;
 
 pub fn pass_domain_args(name: Option<String>, path: Option<PathBuf>) {
     match (name, path) {
@@ -19,15 +17,5 @@ pub fn pass_domain_args(name: Option<String>, path: Option<PathBuf>) {
         (None, None) => {
             println!("Please enter a domain or file path");
         }
-    }
-}
-
-fn check_domain_format(name: &str) -> Result<(), EnrichError> {
-    if name.contains("..") || name.starts_with(".") || name.ends_with(".") {
-        return Err(EnrichError::InvalidDomain);
-    }
-    match Host::parse(name) {
-        Ok(Host::Domain(_)) => Ok(()),
-        _ => Err(EnrichError::InvalidDomain),
     }
 }

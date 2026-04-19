@@ -29,7 +29,6 @@ impl fmt::Display for EnrichError {
 
 pub enum ConfigError {
     FileNotFound,
-    IncorrectFormat,
     ParseError,
     MissingKey(String),
 }
@@ -43,9 +42,13 @@ impl fmt::Display for ConfigError {
                     "Config file not found. Is crab.toml in the same directory as crab?"
                 )
             }
-            ConfigError::IncorrectFormat => write!(f, "Incorrect format"),
-            ConfigError::ParseError => write!(f, "Parsing error on crab.toml"),
-            ConfigError::MissingKey(s) => write!(f, "Missing key from enabled api: {s}"),
+            ConfigError::ParseError => write!(f, "Parsing error on crab.toml."),
+            ConfigError::MissingKey(s) => {
+                write!(
+                    f,
+                    "Missing key from enabled API under: [apis] -> {s} = \"[YOUR_KEY_HERE]\""
+                )
+            }
         }
     }
 }

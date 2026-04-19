@@ -1,12 +1,5 @@
-use crate::enrich::utils::check_path;
-use crate::errors::EnrichError;
+use crate::enrich::utils::*;
 use std::path::PathBuf;
-
-pub enum Hash {
-    MD5(String),
-    SHA1(String),
-    SHA256(String),
-}
 
 pub fn pass_hash_args(sig: Option<String>, path: Option<PathBuf>) {
     match (sig, path) {
@@ -25,14 +18,5 @@ pub fn pass_hash_args(sig: Option<String>, path: Option<PathBuf>) {
         (None, None) => {
             println!("Please enter a hash or a file path.");
         }
-    }
-}
-
-fn check_hash_format(sig: &str) -> Result<Hash, EnrichError> {
-    match sig.len() {
-        32 => Ok(Hash::MD5(sig.to_string())),
-        40 => Ok(Hash::SHA1(sig.to_string())),
-        64 => Ok(Hash::SHA256(sig.to_string())),
-        _ => Err(EnrichError::InvalidSignature),
     }
 }

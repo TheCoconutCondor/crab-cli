@@ -1,24 +1,27 @@
-use crate::enrich::utils::check_path;
-use crate::errors::EnrichError;
-use std::net::{Ipv4Addr, Ipv6Addr};
+use crate::enrich::apis::handler::ApiHandler;
+use crate::enrich::utils::*;
 use std::path::PathBuf;
 
 /// This function will take in the args input from the user
 /// and based on the input given, handle accordingly.
-pub fn pass_ip_args(address: Option<String>, path: Option<PathBuf>) {
+pub async fn pass_ip_args(address: Option<String>, path: Option<PathBuf>, handle: &ApiHandler) {
     match (address, path) {
         // If single address is passed.
         (Some(address), None) => match check_ip_format(&address) {
             Ok(()) => {
-                println!("Format OK!");
-                println!("IP address entered: {address}");
+                if let Some(vt) = &handle.vt {
+                    match vt.get_ip_report(&address).await {
+                        Ok(report) => println!("{}", report.data.attributes),
+                        Err(e) => eprintln!("{e}"),
+                    }
+                }
             }
-            Err(error) => println!("{error}"),
+            Err(e) => println!("{e}"),
         },
         // If a file path is passed.
         (None, Some(path)) => match check_path(&path) {
             Ok(()) => println!("File path is a file!"), // TODO: Need to implement IOC specific path logic instead of Ok(())
-            Err(error) => println!("{error}"),
+            Err(e) => println!("{e}"),
         },
         // If both are passed in the same command.
         (Some(_address), Some(_path)) => {
@@ -28,16 +31,5 @@ pub fn pass_ip_args(address: Option<String>, path: Option<PathBuf>) {
         (None, None) => {
             println!("Please enter an IP address or file path.");
         }
-    }
-}
-
-fn check_ip_format(ip: &str) -> Result<(), EnrichError> {
-    let is_ip4 = ip.parse::<Ipv4Addr>().is_ok();
-    let is_ip6 = ip.parse::<Ipv6Addr>().is_ok();
-
-    if is_ip4 || is_ip6 {
-        Ok(())
-    } else {
-        Err(EnrichError::InvalidAddress)
     }
 }

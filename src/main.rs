@@ -3,9 +3,18 @@ mod config;
 mod enrich;
 mod errors;
 
-fn main() {
+use crate::enrich::apis::handler::ApiHandler;
+
+#[tokio::main]
+async fn main() {
     match config::run() {
-        Ok(_) => cli::run(),
-        Err(e) => eprintln!("{e}"),
+        Ok(()) => {
+            if let Ok(handler) = ApiHandler::new() {
+                cli::run(&handler).await;
+            }
+        }
+        Err(e) => {
+            eprintln!("{e}")
+        }
     }
 }

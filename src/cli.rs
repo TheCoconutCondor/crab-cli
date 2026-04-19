@@ -1,7 +1,7 @@
 use clap::{Parser, Subcommand};
 use std::path::PathBuf;
 
-use crate::enrich;
+use crate::enrich::{self, apis::handler::ApiHandler};
 
 #[derive(Debug, Parser)]
 #[command(name = "crab")]
@@ -51,16 +51,18 @@ enum EnrichCommands {
     },
 }
 
-pub fn run() {
+pub async fn run(handle: &ApiHandler) {
     let args = Cli::parse();
     match args.command {
-        Commands::Enrich { command } => enrich(command),
+        Commands::Enrich { command } => enrich(command, handle).await,
     }
 }
 
-fn enrich(command: EnrichCommands) {
+async fn enrich(command: EnrichCommands, handle: &ApiHandler) {
     match command {
-        EnrichCommands::Ip { address, path } => enrich::ip::pass_ip_args(address, path),
+        EnrichCommands::Ip { address, path } => {
+            enrich::ip::pass_ip_args(address, path, handle).await
+        }
         EnrichCommands::Hash { sig, path } => enrich::hash::pass_hash_args(sig, path),
         EnrichCommands::Domain { name, path } => enrich::domain::pass_domain_args(name, path),
         EnrichCommands::Url { link, path } => enrich::url::pass_url_args(link, path),

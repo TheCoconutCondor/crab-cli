@@ -1,2 +1,2 @@
-mod ipinfo;
-mod virustotal;
+pub mod handler;
+pub mod virustotal;

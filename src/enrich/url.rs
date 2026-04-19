@@ -1,7 +1,5 @@
-use crate::enrich::utils::check_path;
-use crate::errors::EnrichError;
+use crate::enrich::utils::*;
 use std::path::PathBuf;
-use url::Url;
 
 pub fn pass_url_args(link: Option<String>, path: Option<PathBuf>) {
     match (link, path) {
@@ -19,12 +17,5 @@ pub fn pass_url_args(link: Option<String>, path: Option<PathBuf>) {
         (None, None) => {
             println!("Please enter a URL or file path.")
         }
-    }
-}
-
-fn check_url_format(link: &str) -> Result<(), EnrichError> {
-    match Url::parse(link) {
-        Ok(_) => Ok(()),
-        _ => Err(EnrichError::InvalidUrl),
     }
 }
