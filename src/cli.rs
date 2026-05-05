@@ -63,8 +63,10 @@ async fn enrich(command: EnrichCommands, handle: &ApiHandler) {
         EnrichCommands::Ip { address, path } => {
             enrich::ip::pass_ip_args(address, path, handle).await
         }
-        EnrichCommands::Hash { sig, path } => enrich::hash::pass_hash_args(sig, path),
-        EnrichCommands::Domain { name, path } => enrich::domain::pass_domain_args(name, path),
-        EnrichCommands::Url { link, path } => enrich::url::pass_url_args(link, path),
+        EnrichCommands::Hash { sig, path } => enrich::hash::pass_hash_args(sig, path, handle).await,
+        EnrichCommands::Domain { name, path } => {
+            enrich::domain::pass_domain_args(name, path, handle).await
+        }
+        EnrichCommands::Url { link, path } => enrich::url::pass_url_args(link, path, handle).await,
     }
 }

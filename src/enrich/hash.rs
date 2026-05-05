@@ -1,11 +1,18 @@
-use crate::enrich::utils::*;
+use crate::enrich::{apis::handler::ApiHandler, utils::*};
 use std::path::PathBuf;
 
-pub fn pass_hash_args(sig: Option<String>, path: Option<PathBuf>) {
+pub async fn pass_hash_args(sig: Option<String>, path: Option<PathBuf>, handle: &ApiHandler) {
     match (sig, path) {
         (Some(sig), None) => match check_hash_format(&sig) {
-            Ok(_) => println!("Hash entered: {sig}"),
-            Err(error) => println!("{error}"),
+            Ok(_) => {
+                if let Some(vt) = &handle.vt {
+                    match vt.get_hash_report(&sig).await {
+                        Ok(report) => println!("{}", report.data.attributes),
+                        Err(e) => eprintln!("{e}"),
+                    }
+                }
+            }
+            Err(e) => println!("{e}"),
         },
         // If a file path is targeted.
         (None, Some(path)) => match check_path(&path) {
