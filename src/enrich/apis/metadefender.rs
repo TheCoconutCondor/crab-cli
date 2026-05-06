@@ -81,3 +81,88 @@ struct Location {
     longitude: Option<i32>,
     name: Option<String>,
 }
+
+impl MdClient {
+    pub fn new(apikey: &str) -> Self {
+        Self {
+            endpoint: Client::new(),
+            key: apikey.to_string(),
+        }
+    }
+
+    pub async fn get_hash_report(
+        &self,
+        sig: &str,
+    ) -> Result<MdResponse<HashReportData>, reqwest::Error> {
+        self.endpoint
+            .get(format!("https://api.metadefender.com/v4/hash/{sig}"))
+            .header("apikey", &self.key)
+            .send()
+            .await?
+            .error_for_status()?
+            .json()
+            .await
+    }
+
+    pub async fn get_ip_report(
+        &self,
+        address: &str,
+    ) -> Result<MdResponse<IpReportData>, reqwest::Error> {
+        self.endpoint
+            .get(format!("https://api.metadefender.com/v4/ip/{address}"))
+            .header("apikey", &self.key)
+            .send()
+            .await?
+            .error_for_status()?
+            .json()
+            .await
+    }
+}
+
+impl std::fmt::Display for HashReportData {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        writeln!(
+            f,
+            "{:<25} {}",
+            "Display Name:",
+            self.file_info.display_name.as_deref().unwrap_or("?")
+        )?;
+        writeln!(
+            f,
+            "{:<25} {}",
+            "File Type Extension:",
+            self.file_info.file_type_extension.as_deref().unwrap_or("?")
+        )?;
+        writeln!(
+            f,
+            "{:<25} {}",
+            "File Type Category:",
+            self.file_info.file_type_category.as_deref().unwrap_or("?")
+        )?;
+        writeln!(
+            f,
+            "{:<25} {}",
+            "File Type Description:",
+            self.file_info
+                .file_type_description
+                .as_deref()
+                .unwrap_or("?")
+        )?;
+        writeln!(f, "{:<25} {}", "Votes:", "")?;
+        writeln!(
+            f,
+            "{:<15}{:<10} {}",
+            "",
+            "Up:",
+            self.votes.up.map_or("?".into(), |d| d.to_string())
+        )?;
+        writeln!(
+            f,
+            "{:<15}{:<10} {}",
+            "",
+            "Down:",
+            self.votes.down.map_or("?".into(), |d| d.to_string())
+        )?;
+        Ok(())
+    }
+}
