@@ -12,6 +12,7 @@ pub enum Hash {
 
 pub enum ApiName {
     Virustotal,
+    Metadefender,
 }
 
 pub enum IocType {

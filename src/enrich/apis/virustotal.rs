@@ -1,7 +1,7 @@
 use reqwest::Client;
 use serde::Deserialize;
 use std::collections::HashMap;
-use std::{fmt::Formatter, ops::IndexMut};
+use std::fmt::Formatter;
 
 pub struct VtClient {
     pub endpoint: Client,

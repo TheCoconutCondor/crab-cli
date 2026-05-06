@@ -18,6 +18,7 @@ impl ApiHandler {
         for api in enabled {
             match api.name {
                 ApiName::Virustotal => handler.vt = Some(VtClient::new(&api.key)),
+                ApiName::Metadefender => (),
             }
         }
         Ok(handler)
