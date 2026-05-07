@@ -166,3 +166,113 @@ impl std::fmt::Display for HashReportData {
         Ok(())
     }
 }
+
+impl std::fmt::Display for IpReportData {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        writeln!(
+            f,
+            "{:<25} {}",
+            "IP Address:",
+            self.address.as_deref().unwrap_or("?")
+        )?;
+        writeln!(
+            f,
+            "{:<25} {}",
+            "Detected By:",
+            self.lookup_results
+                .detected_by
+                .map_or("?".into(), |d| d.to_string())
+        )?;
+        writeln!(f, "{:<25} {}", "Sources:", "")?;
+        match &self.lookup_results.sources {
+            Some(sources) => {
+                for source in sources {
+                    writeln!(f, "{source}")?;
+                }
+            }
+            None => (),
+        }
+        writeln!(
+            f,
+            "{:<25} {}",
+            "Geo Info - Country:",
+            self.geo_info.country.name.as_deref().unwrap_or("?")
+        )?;
+        writeln!(
+            f,
+            "{:<25} {}",
+            "Geo Info - City:",
+            self.geo_info.city.name.as_deref().unwrap_or("?")
+        )?;
+        writeln!(f, "{:<25} {}", "Geo Info - Location:", "")?;
+        writeln!(
+            f,
+            "{:<15}{:<10} {}",
+            "",
+            "Latitude:",
+            self.geo_info
+                .location
+                .latitude
+                .map_or("?".into(), |d| d.to_string())
+        )?;
+        writeln!(
+            f,
+            "{:<15}{:<10} {}",
+            "",
+            "Longitude:",
+            self.geo_info
+                .location
+                .longitude
+                .map_or("?".into(), |d| d.to_string())
+        )?;
+        writeln!(
+            f,
+            "{:<15}{:<10} {}",
+            "",
+            "Name:",
+            self.geo_info.location.name.as_deref().unwrap_or("?")
+        )?;
+        Ok(())
+    }
+}
+
+impl std::fmt::Display for Source {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        writeln!(
+            f,
+            "{:<15}{:<10} {}",
+            "",
+            "Provider:",
+            self.provider.as_deref().unwrap_or("?")
+        )?;
+        writeln!(
+            f,
+            "{:<15}{:<10} {}",
+            "",
+            "Assessment:",
+            self.assessment.as_deref().unwrap_or("?")
+        )?;
+        writeln!(
+            f,
+            "{:<15}{:<10} {}",
+            "",
+            "Detect Time:",
+            self.detect_time.as_deref().unwrap_or("?")
+        )?;
+        writeln!(
+            f,
+            "{:<15}{:<10} {}",
+            "",
+            "Update Time:",
+            self.update_time.as_deref().unwrap_or("?")
+        )?;
+        writeln!(
+            f,
+            "{:<15}{:<10} {}",
+            "",
+            "Status:",
+            self.status.map_or("?".into(), |d| d.to_string())
+        )?;
+        Ok(())
+    }
+}

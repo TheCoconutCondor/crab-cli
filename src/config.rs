@@ -10,23 +10,32 @@ pub struct Config {
 }
 
 impl Config {
-    fn api_entries(&self) -> [(bool, &Option<String>, ApiName); 1] {
-        [(
-            self.apis.virustotal,
-            &self.keys.virustotal,
-            ApiName::Virustotal,
-        )]
+    fn api_entries(&self) -> [(bool, &Option<String>, ApiName); 2] {
+        [
+            (
+                self.apis.virustotal,
+                &self.keys.virustotal,
+                ApiName::Virustotal,
+            ),
+            (
+                self.apis.metadefender,
+                &self.keys.metadefender,
+                ApiName::Metadefender,
+            ),
+        ]
     }
 }
 
 #[derive(Deserialize)]
 struct Keys {
     virustotal: Option<String>,
+    metadefender: Option<String>,
 }
 
 #[derive(Deserialize)]
 struct Apis {
     virustotal: bool,
+    metadefender: bool,
 }
 
 pub struct EnabledApi {
@@ -55,16 +64,6 @@ pub fn get_enabled_apis() -> Result<Vec<EnabledApi>, ConfigError> {
         .collect();
     Ok(enabled)
 }
-
-// TODO: Maybe delete this?
-// pub fn get_api_key(api_name: &str) -> Result<String, ConfigError> {
-//     let key = get_enabled_apis()?
-//         .into_iter()
-//         .find(|api| api.name.as_str() == api_name)
-//         .map(|api| api.key)
-//         .ok_or(ConfigError::MissingKey(api_name.to_string()))?;
-//     Ok(key)
-// }
 
 fn get_config() -> Result<Config, ConfigError> {
     let path = check_config_location()?;

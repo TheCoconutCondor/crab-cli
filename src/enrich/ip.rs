@@ -2,18 +2,17 @@ use crate::enrich::apis::handler::ApiHandler;
 use crate::enrich::utils::*;
 use std::path::PathBuf;
 
-/// This function will take in the args input from the user
+/// This function will take in the args for an IP address
+/// input to enrich from the user
 /// and based on the input given, handle accordingly.
 pub async fn pass_ip_args(address: Option<String>, path: Option<PathBuf>, handle: &ApiHandler) {
     match (address, path) {
         // If single address is passed.
         (Some(address), None) => match check_ip_format(&address) {
             Ok(()) => {
-                if let Some(vt) = &handle.vt {
-                    match vt.get_ip_report(&address).await {
-                        Ok(report) => println!("{}", report.data.attributes),
-                        Err(e) => eprintln!("{e}"),
-                    }
+                for result in handle.get_ip_intel(&address).await {
+                    println!("====== {} ======", result.provider.as_str());
+                    println!("{}", result.data);
                 }
             }
             Err(e) => println!("{e}"),

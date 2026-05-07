@@ -1,4 +1,3 @@
-use crate::enrich::apis::handler::ApiHandler;
 use crate::errors::EnrichError;
 use std::net::{Ipv4Addr, Ipv6Addr};
 use std::path::PathBuf;
@@ -25,7 +24,8 @@ pub enum IocType {
 impl ApiName {
     pub fn as_str(&self) -> &'static str {
         match self {
-            ApiName::Virustotal => "virustotal",
+            ApiName::Virustotal => "VirusTotal",
+            ApiName::Metadefender => "MetaDefender",
         }
     }
 }
