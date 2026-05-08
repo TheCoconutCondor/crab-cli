@@ -51,7 +51,7 @@ impl ApiHandler {
             match md.get_ip_report(address).await {
                 Ok(result) => results.push(IntelResult {
                     provider: ApiName::Metadefender,
-                    data: result.object.to_string(),
+                    data: result.to_string(),
                 }),
                 Err(e) => results.push(IntelResult {
                     provider: ApiName::Metadefender,
@@ -81,7 +81,7 @@ impl ApiHandler {
             match md.get_hash_report(sig).await {
                 Ok(result) => results.push(IntelResult {
                     provider: ApiName::Metadefender,
-                    data: result.object.to_string(),
+                    data: result.to_string(),
                 }),
                 Err(e) => results.push(IntelResult {
                     provider: ApiName::Metadefender,

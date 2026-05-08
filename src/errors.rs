@@ -42,7 +42,23 @@ impl fmt::Display for ConfigError {
                     "Config file not found. Is crab.toml in the same directory as crab?"
                 )
             }
-            ConfigError::ParseError => write!(f, "Parsing error on crab.toml."),
+            ConfigError::ParseError => write!(
+                f,
+                "Parsing error on crab.toml. Copy the below format and
+overwrite your crab.toml file with this:
+    |
+    v
+    
+[keys]
+virustotal = \"\"
+metadefender = \"\"
+
+[apis]
+virustotal = false
+metadefender = false
+
+                "
+            ),
             ConfigError::MissingKey(s) => {
                 write!(
                     f,

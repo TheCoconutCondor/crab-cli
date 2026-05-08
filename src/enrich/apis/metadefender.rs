@@ -7,20 +7,17 @@ pub struct MdClient {
     pub key: String,
 }
 
-// The response object which will take different ReportData structs
-#[derive(Deserialize, Debug)]
-pub struct MdResponse<T> {
-    pub object: T,
-}
-
 // HASH REPORT RESPONSE DATA
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Default)]
 pub struct HashReportData {
+    #[serde(default)]
     file_info: FileInfo,
+
+    #[serde(default)]
     votes: Votes,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Default)]
 struct FileInfo {
     display_name: Option<String>,
     file_type_extension: Option<String>,
@@ -28,7 +25,7 @@ struct FileInfo {
     file_type_description: Option<String>,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Default)]
 struct Votes {
     up: Option<u32>,
     down: Option<u32>,
@@ -36,14 +33,18 @@ struct Votes {
 // END HASH REPORT RESPONSE DATA
 //
 // IP REPORT RESPONSE DATA
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Default)]
 pub struct IpReportData {
     address: Option<String>,
+
+    #[serde(default)]
     lookup_results: LookupResults,
+
+    #[serde(default)]
     geo_info: GeoInfo,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Default)]
 struct LookupResults {
     detected_by: Option<i32>,
     sources: Option<Vec<Source>>,
@@ -58,27 +59,32 @@ struct Source {
     status: Option<i32>,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Default)]
 struct GeoInfo {
+    #[serde(default)]
     country: Country,
+
+    #[serde(default)]
     city: City,
+
+    #[serde(default)]
     location: Location,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Default)]
 struct Country {
     name: Option<String>,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Default)]
 struct City {
     name: Option<String>,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Default)]
 struct Location {
-    latitude: Option<i32>,
-    longitude: Option<i32>,
+    latitude: Option<f64>,
+    longitude: Option<f64>,
     name: Option<String>,
 }
 
@@ -90,31 +96,25 @@ impl MdClient {
         }
     }
 
-    pub async fn get_hash_report(
-        &self,
-        sig: &str,
-    ) -> Result<MdResponse<HashReportData>, reqwest::Error> {
+    pub async fn get_hash_report(&self, sig: &str) -> Result<HashReportData, reqwest::Error> {
         self.endpoint
             .get(format!("https://api.metadefender.com/v4/hash/{sig}"))
             .header("apikey", &self.key)
             .send()
             .await?
             .error_for_status()?
-            .json()
+            .json::<HashReportData>()
             .await
     }
 
-    pub async fn get_ip_report(
-        &self,
-        address: &str,
-    ) -> Result<MdResponse<IpReportData>, reqwest::Error> {
+    pub async fn get_ip_report(&self, address: &str) -> Result<IpReportData, reqwest::Error> {
         self.endpoint
             .get(format!("https://api.metadefender.com/v4/ip/{address}"))
             .header("apikey", &self.key)
             .send()
             .await?
             .error_for_status()?
-            .json()
+            .json::<IpReportData>()
             .await
     }
 }
